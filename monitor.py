@@ -88,7 +88,6 @@ def createSession():
 
 def requestRafflePage(session, link):
     response = session.get('https://www.premint.xyz'+link, headers={
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
         "accept-language": "en-US,en;q=0.9",
         "cache-control": "max-age=0",
         "sec-ch-ua": "\".Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"103\", \"Chromium\";v=\"103\"",
@@ -101,7 +100,6 @@ def requestRafflePage(session, link):
         "upgrade-insecure-requests": "1",
         "Referer": "https://www.premint.xyz/collectors/explore/",
         "Referrer-Policy": "same-origin",
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     })
     parsed_html = BeautifulSoup(response.text, "html.parser")
     twitterStep = parsed_html.find('div', {"id": "step-twitter"})
@@ -189,7 +187,6 @@ def getAll(session):
 
 def requestPage(session, csrf, sessionId):
     response = session.get('https://www.premint.xyz/collectors/explore/new/', headers={
-        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
         "accept-language": "en-US,en;q=0.9",
         "cache-control": "max-age=0",
         "sec-ch-ua": "\".Not/A)Brand\";v=\"99\", \"Google Chrome\";v=\"103\", \"Chromium\";v=\"103\"",
@@ -203,7 +200,6 @@ def requestPage(session, csrf, sessionId):
         "Referer": "https://www.premint.xyz/collectors/explore/",
         "Referrer-Policy": "same-origin",
         "Cookie": f'csrftoken=${csrf}; session_id={sessionId};',
-        'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     })
     parsed_html = BeautifulSoup(response.text, "html.parser")
     all_ = parsed_html.find_all('div', {"class": "row text-lg-right strong"})
