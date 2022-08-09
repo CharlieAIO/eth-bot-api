@@ -19,7 +19,7 @@ from helheim.exceptions import (
 SERVER = 'http://178.62.79.103:8000'
 API_KEY = '329eae77-9a91-4666-8a00-ce8a9de6147a'
 webhooks = [
-    'https://discord.com/api/webhooks/1000038962628403200/ZdHxaLSwBGCVmJTuEoHKE9IF7InjpWJgamtOCO6rn3fN7FFDdKxAElV0eQfH5ZwquhyL',
+    # 'https://discord.com/api/webhooks/1000038962628403200/ZdHxaLSwBGCVmJTuEoHKE9IF7InjpWJgamtOCO6rn3fN7FFDdKxAElV0eQfH5ZwquhyL',
     'https://discord.com/api/webhooks/1000169276411494410/Ej_VnNPreaTKk0Hurx4BkSADAqO_7rJ__sClB3RWKzIQTbJoQCqadW_FrQqbX6aCj4MX'
 ]
 
@@ -189,6 +189,8 @@ def requestRafflePage(session, link):
 
 
 def addToDB(session, data):
+    list_ = []
+    list_.append(data)
     print(data)
     response = session.post(SERVER+'/raffles', json=data,
                             headers={'x-api-key': API_KEY})
@@ -267,18 +269,18 @@ def requestPage(session, csrf, sessionId):
             "eth": eth,
             "date": ""
         }
-        print(data)
         sendWebhooks(data)
         all_raffles.append(data)
         with open('raffles.json', 'r+') as f:
             d = json.load(f)
             exists = checkIfExists(data['id'], d)
             if(not exists):
+                addToDB(session, data)
                 d.append(data)
                 f.seek(0)
                 json.dump(d, f)
 
-    addToDB(session, all_raffles)
+    # addToDB(session, all_raffles)
     # print(all_raffles)
 
 
