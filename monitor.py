@@ -26,6 +26,7 @@ webhooks = [
 
 def sendWebhooks(data):
     for webhook in webhooks:
+        time.sleep(5)
         webhook = DiscordWebhook(url=webhook)
 
         embed = DiscordEmbed(title='**New PreMint Raffle**', color='248e97')
@@ -279,7 +280,7 @@ def monitor():
     while(run):
         print(str(time.time()) + " |GETTING RAFFLES...")
         requestPage(session, csrf, sessionId)
-        # time.sleep(60 * 30)
+        time.sleep(60 * 30)
 
 
 monitor()
