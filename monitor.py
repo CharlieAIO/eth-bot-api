@@ -7,8 +7,8 @@ import time
 from discord_webhook import DiscordWebhook, DiscordEmbed
 
 
-SERVER = 'http://localhost:8000'
-API_KEY = '12345'
+SERVER = 'http://178.62.79.103:8000'
+API_KEY = '329eae77-9a91-4666-8a00-ce8a9de6147a'
 webhooks = [
     # 'https://discord.com/api/webhooks/1000038962628403200/ZdHxaLSwBGCVmJTuEoHKE9IF7InjpWJgamtOCO6rn3fN7FFDdKxAElV0eQfH5ZwquhyL',
     'https://discord.com/api/webhooks/1000169276411494410/Ej_VnNPreaTKk0Hurx4BkSADAqO_7rJ__sClB3RWKzIQTbJoQCqadW_FrQqbX6aCj4MX'
@@ -261,6 +261,7 @@ def monitor():
     sessionId = 'f3zv7qat5aoya7b0f3mwq1a6vqzwl2dk'
 
     while(run):
+        print(time.time() + " |GETTING RAFFLES...")
         requestPage(session, csrf, sessionId)
         time.sleep(60 * 30)
 
