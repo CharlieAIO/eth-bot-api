@@ -191,8 +191,8 @@ def requestRafflePage(session, link):
 def addToDB(session, data):
     list_ = []
     list_.append(data)
-    print(data)
-    response = session.post(SERVER+'/raffles', json=data,
+    print(list_)
+    response = session.post(SERVER+'/raffles', json=list_,
                             headers={'x-api-key': API_KEY})
     print(response)
     print(response.text)
