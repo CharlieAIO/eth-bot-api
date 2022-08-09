@@ -97,8 +97,8 @@ def createSession():
         captcha={"provider": 'vanaheim'}
     )
     helheim.wokou(session)
-    session.bifrost_clientHello = 'chrome'
-    helheim.bifrost(session, './bifrost-0.0.7-linux.x86_64.so')
+    # session.bifrost_clientHello = 'chrome'
+    # helheim.bifrost(session, './bifrost-0.0.7-linux.x86_64.so')
     session.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
     session.headers['accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
     return session
@@ -128,7 +128,7 @@ def requestRafflePage(session, link):
     twitter_steps = {}
     discord_steps = {}
     extra_steps = {}
-    eth = 0
+    eth = "0"
 
     if(twitterStep):
         users_to_follow = []
@@ -203,6 +203,15 @@ def getAll(session):
     return json.loads(response.text)
 
 
+def checkIfExists(id, data):
+    exists = False
+    for r in data:
+        if r['id'] == id and exists == False:
+            exists = True
+
+    return exists
+
+
 def requestPage(session, csrf, sessionId):
     response = session.get('https://www.premint.xyz/collectors/explore/new/', headers={
         "accept-language": "en-US,en;q=0.9",
@@ -227,23 +236,23 @@ def requestPage(session, csrf, sessionId):
         try:
             img = raffle.find('div', {"class": "block-icon"}).img.attrs['src']
         except Exception as e:
-            img = ''
+            img = 'https://pbs.twimg.com/profile_images/1505785782002339840/mgeaHOqx_400x400.jpg'
 
         try:
             name = raffle.find('div', {"class": "block-content"}).a.text
         except Exception as e:
-            name = ''
+            name = 'Unknown'
 
         try:
             link = raffle.find('div', {"class": "block-content"}).a['href']
         except Exception as e:
-            link = ''
+            link = 'https://www.premint.xyz'
 
         try:
             supply = raffle.find(
                 'div', {"class": "block-content"}).div.text.strip()
         except Exception as e:
-            supply = ''
+            supply = 'Unknown'
 
         twitter, discord, extra_steps, eth = requestRafflePage(session, link)
 
@@ -263,9 +272,11 @@ def requestPage(session, csrf, sessionId):
         all_raffles.append(data)
         with open('raffles.json', 'r+') as f:
             d = json.load(f)
-            d.append(data)
-            f.seek(0)
-            json.dump(d, f)
+            exists = checkIfExists(data['id'], d)
+            if(not exists):
+                d.append(data)
+                f.seek(0)
+                json.dump(d, f)
 
     addToDB(session, all_raffles)
     # print(all_raffles)
