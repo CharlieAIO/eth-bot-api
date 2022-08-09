@@ -205,13 +205,12 @@ def getAll(session):
     return json.loads(response.text)
 
 
-def checkIfExists(id, data):
-    exists = False
-    for r in data:
-        if r['id'] == id and exists == False:
-            exists = True
+def checkIfExists(session, id):
+    response = session.get(SERVER+'/raffles/'+id,
+                           headers={'x-api-key': API_KEY})
 
-    return exists
+    res = json.loads(response.text)
+    return len(res) > 0
 
 
 def requestPage(session, csrf, sessionId):
@@ -269,13 +268,13 @@ def requestPage(session, csrf, sessionId):
             "eth": eth,
             "date": ""
         }
-        sendWebhooks(data)
-        all_raffles.append(data)
-        with open('raffles.json', 'r+') as f:
-            d = json.load(f)
-            exists = checkIfExists(data['id'], d)
-            if(not exists):
-                addToDB(session, data)
+        exists = checkIfExists(session, data['id'])
+        if(not exists):
+            addToDB(session, data)
+            sendWebhooks(data)
+            all_raffles.append(data)
+            with open('raffles.json', 'r+') as f:
+                d = json.load(f)
                 d.append(data)
                 f.seek(0)
                 json.dump(d, f)
