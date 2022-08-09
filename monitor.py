@@ -41,11 +41,14 @@ def sendWebhooks(data):
                               value=data['eth'], inline=True)
         embed.set_timestamp()
 
-        follow_list = ''
-        for follow in data['twitter']['follows']:
-            follow_list += f'[{follow}](https://twitter.com/{follow}) '
-        embed.add_embed_field(name='Twitter', value=follow_list, inline=False)
-
+        try:
+            follow_list = ''
+            for follow in data['twitter']['follows']:
+                follow_list += f'[{follow}](https://twitter.com/{follow}) '
+            embed.add_embed_field(
+                name='Twitter', value=follow_list, inline=False)
+        except KeyError:
+            pass
         try:
             if data['twitter']['retweet'] or data['twitter']['like']:
                 description = '['
