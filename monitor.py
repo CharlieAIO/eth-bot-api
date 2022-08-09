@@ -272,12 +272,6 @@ def requestPage(session, csrf, sessionId):
         if(not exists):
             addToDB(session, data)
             sendWebhooks(data)
-            all_raffles.append(data)
-            with open('raffles.json', 'r+') as f:
-                d = json.load(f)
-                d.append(data)
-                f.seek(0)
-                json.dump(d, f)
 
     # addToDB(session, all_raffles)
     # print(all_raffles)
