@@ -4,6 +4,16 @@ import cloudscraper
 from bs4 import BeautifulSoup
 import time
 from discord_webhook import DiscordWebhook, DiscordEmbed
+from helheim.exceptions import (
+    HelheimException,
+    HelheimSolveError,
+    HelheimRuntimeError,
+    HelheimSaaSError,
+    HelheimSaaSBalance,
+    HelheimVersion,
+    HelheimAuthError,
+    HelheimBifrost
+)
 
 
 SERVER = 'http://178.62.79.103:8000'
@@ -83,6 +93,8 @@ def createSession():
         captcha={"provider": 'vanaheim'}
     )
     helheim.wokou(session)
+    session.bifrost_clientHello = 'chrome'
+    helheim.bifrost(session, './bifrost-0.0.7-linux.x86_64.so')
     return session
 
 
@@ -172,10 +184,10 @@ def requestRafflePage(session, link):
 
 def addToDB(session, data):
     print(data)
-    response = session.post(SERVER+'/raffles', json=data,
-                            headers={'x-api-key': API_KEY})
-    print(response)
-    print(response.text)
+    # response = session.post(SERVER+'/raffles', json=data,
+    #                         headers={'x-api-key': API_KEY})
+    # print(response)
+    # print(response.text)
 
 
 def getAll(session):
