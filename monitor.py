@@ -95,6 +95,8 @@ def createSession():
     helheim.wokou(session)
     session.bifrost_clientHello = 'chrome'
     helheim.bifrost(session, './bifrost-0.0.7-linux.x86_64.so')
+    session.headers['user-agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36'
+    session.headers['accept'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9'
     return session
 
 
@@ -184,10 +186,10 @@ def requestRafflePage(session, link):
 
 def addToDB(session, data):
     print(data)
-    # response = session.post(SERVER+'/raffles', json=data,
-    #                         headers={'x-api-key': API_KEY})
-    # print(response)
-    # print(response.text)
+    response = session.post(SERVER+'/raffles', json=data,
+                            headers={'x-api-key': API_KEY})
+    print(response)
+    print(response.text)
 
 
 def getAll(session):
