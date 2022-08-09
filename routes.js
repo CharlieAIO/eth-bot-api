@@ -26,7 +26,6 @@ router.get('/raffles/:id', async (req, res) => {
 router.post('/raffles', async (req, res) => {
     added = false
     let data = req.body
-    console.log(data)
     for (var i = 0; i < data.length; i++) {
         results = await pool.query(`SELECT * FROM raffles WHERE "id" = '${data[i].id.trim()}'`)
         if (results.rows.length < 1) {

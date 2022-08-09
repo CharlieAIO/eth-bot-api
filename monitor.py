@@ -1,5 +1,4 @@
 import json
-from unicodedata import name
 import helheim
 import cloudscraper
 from bs4 import BeautifulSoup
@@ -174,8 +173,11 @@ def requestRafflePage(session, link):
 
 
 def addToDB(session, data):
+    print(data)
     response = session.post(SERVER+'/raffles', json=data,
                             headers={'x-api-key': API_KEY})
+    print(response)
+    print(response.text)
 
 
 def getAll(session):
@@ -242,6 +244,7 @@ def requestPage(session, csrf, sessionId):
             "eth": eth,
             "date": ""
         }
+        print(data)
         sendWebhooks(data)
         all_raffles.append(data)
         with open('raffles.json', 'r+') as f:
