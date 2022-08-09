@@ -261,7 +261,7 @@ def monitor():
     sessionId = 'f3zv7qat5aoya7b0f3mwq1a6vqzwl2dk'
 
     while(run):
-        print(time.time() + " |GETTING RAFFLES...")
+        print(str(time.time()) + " |GETTING RAFFLES...")
         requestPage(session, csrf, sessionId)
         time.sleep(60 * 30)
 
