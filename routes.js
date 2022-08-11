@@ -59,4 +59,23 @@ router.delete('/raffles/:id', async (req, res) => {
     return res.status(200).json({ deleted: true, id: req.params.id })
 })
 
+router.put('/raffles/:id/:roleId', async (req, res) => {
+    let updated = false;
+    let results;
+    try {
+        results = await pool.query(`SELECT * FROM raffles WHERE "id" = '${req.params.id.trim()}'`)
+    } catch { results = [] }
+
+
+    if (results.rows.length > 0) {
+        if (results.rows[0].discord?.role) {
+            let discordJSON = results.rows[0].discord
+            discordJSON.roleId = req.params.roleId.trim()
+            updated = true;
+            await pool.query(`UPDATE raffles SET "discord" = '${JSON.stringify(discordJSON)}' WHERE "id" = '${req.params.id.trim()}'`)
+        }
+    }
+    return res.status(200).json({ updated, id: req.params.id })
+})
+
 module.exports = router
