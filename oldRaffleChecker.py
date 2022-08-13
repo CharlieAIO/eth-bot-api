@@ -55,7 +55,7 @@ def sendHook(text):
 def run_checker():
     session = createSession()
     while True:
-
+        print("Checking for closed raffles...")
         raffles = getAll(session)
         deleted = 0
         for r in raffles:
