@@ -48,7 +48,7 @@ def createSession():
 
 
 def sendHook(text):
-    webhook = DiscordWebhook(url=webhook, content=text)
+    webhook = DiscordWebhook(url=WEBHOOK, content=text)
     webhook.execute()
 
 
