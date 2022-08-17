@@ -81,7 +81,7 @@ def run_checker():
             time.sleep(1)
 
         print("Deleted {} Raffles from DB".format(deleted))
-        sendHook("Deleted {} Raffles from DB".format(deleted))
+        # sendHook("Deleted {} Raffles from DB".format(deleted))
         time.sleep(1 * 60 * 60 * 3)
 
 

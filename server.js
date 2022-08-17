@@ -13,11 +13,21 @@ const setupServer = () => {
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(express.json())
     app.use((req, res, next) => {
-        if (req.headers['x-api-key'] !== process.env.API_KEY) {
-            return res.status(403).json({
-                response: 'ACCESS DENIED',
-                reason: 'INVALID API KEY'
-            })
+        if (req.url.includes('/raffles')) {
+            if (req.headers['x-api-key'] !== process.env.API_KEY) {
+                return res.status(403).json({
+                    response: 'ACCESS DENIED',
+                    reason: 'INVALID API KEY'
+                })
+            }
+        }
+        if (req.url.includes('/raffles')) {
+            if (req.headers['x-api-key'] !== process.env.API_KEY) {
+                return res.status(403).json({
+                    response: 'ACCESS DENIED',
+                    reason: 'INVALID API KEY'
+                })
+            }
         }
         return next()
     })

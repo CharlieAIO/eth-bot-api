@@ -1,5 +1,6 @@
 const { Router } = require('express')
-const { pool } = require('./utils')
+const { pool, generateKey } = require('./utils')
+const { uuid } = require('uuidv4');
 
 const router = Router();
 
@@ -76,6 +77,20 @@ router.put('/raffles/:id/:roleId', async (req, res) => {
         }
     }
     return res.status(200).json({ updated, id: req.params.id })
+})
+
+
+
+router.post('/license/create/:amount', async (req, res) => {
+    for (var i = 0; i < parseInt(req.params.amount); i++) {
+        let key;
+        await pool.query(`INSERT INTO licenses VALUES ($1,$2,$3,$4)`, [
+            uuid(),
+            generateKey(null, 30),
+            false,
+            null
+        ])
+    }
 })
 
 module.exports = router

@@ -12,4 +12,11 @@ const pool = new Pool({
     ssl: true
 })
 
-module.exports = { pool }
+const generateKey = (prefix, length) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let key = new Array(length).fill("").map(e => characters.charAt(Math.floor(Math.random() * characters.length))).join('')
+    return `${(prefix ? `${prefix}-` : '')}${key}`
+}
+
+
+module.exports = { pool, generateKey }

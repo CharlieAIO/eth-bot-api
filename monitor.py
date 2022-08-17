@@ -18,62 +18,65 @@ from helheim.exceptions import (
 
 SERVER = 'http://178.62.79.103:8000'
 API_KEY = '329eae77-9a91-4666-8a00-ce8a9de6147a'
-webhooks = [
+PUBLIC_WEBHOOKS = [
     'https://discord.com/api/webhooks/1000038962628403200/ZdHxaLSwBGCVmJTuEoHKE9IF7InjpWJgamtOCO6rn3fN7FFDdKxAElV0eQfH5ZwquhyL',
+    'https://discord.com/api/webhooks/1000169276411494410/Ej_VnNPreaTKk0Hurx4BkSADAqO_7rJ__sClB3RWKzIQTbJoQCqadW_FrQqbX6aCj4MX'
+]
+PRIVATE_WEBHOOKS = [
+    'https://discord.com/api/webhooks/1000157922824831086/1-mzXKDSuOhDEArFNibYSCgigqzQMBLyTdsDOEc49R_Qk0ovpzN74EidH2CaGil4gVFT',
     'https://discord.com/api/webhooks/1000169276411494410/Ej_VnNPreaTKk0Hurx4BkSADAqO_7rJ__sClB3RWKzIQTbJoQCqadW_FrQqbX6aCj4MX'
 ]
 
 
 def sendWebhooks(data):
-    for webhook in webhooks:
-        time.sleep(5)
-        webhook = DiscordWebhook(url=webhook)
+    time.sleep(5)
+    webhook = DiscordWebhook(url=PUBLIC_WEBHOOKS)
 
-        embed = DiscordEmbed(title='**New PreMint Raffle**', color='248e97')
+    embed = DiscordEmbed(title='**New PreMint Raffle**', color='248e97')
 
-        embed.set_url('https://www.premint.xyz/{}/'.format(data['id']))
-        embed.set_thumbnail(url=data['image'])
-        embed.set_footer(
-            text='@amnotifynft', icon_url='https://media.discordapp.net/attachments/776073568114704424/1000115103791861810/amnftv3.png')
-        embed.add_embed_field(name='Raffle', value=data['name'], inline=True)
-        embed.add_embed_field(name='Number of Winner',
-                              value=data['winners'], inline=True)
-        embed.add_embed_field(name='ETH Required',
-                              value=data['eth'], inline=True)
-        embed.set_timestamp()
+    embed.set_url('https://www.premint.xyz/{}/'.format(data['id']))
+    embed.set_thumbnail(url=data['image'])
+    embed.set_footer(
+        text='@amnotifynft', icon_url='https://media.discordapp.net/attachments/776073568114704424/1000115103791861810/amnftv3.png')
+    embed.add_embed_field(name='Raffle', value=data['name'], inline=True)
+    embed.add_embed_field(name='Number of Winner',
+                          value=data['winners'], inline=True)
+    embed.add_embed_field(name='ETH Required',
+                          value=data['eth'], inline=True)
+    embed.set_timestamp()
 
-        try:
-            follow_list = ''
-            for follow in data['twitter']['follows']:
-                follow_list += f'[{follow}](https://twitter.com/{follow}) '
+    try:
+        follow_list = ''
+        for follow in data['twitter']['follows']:
+            follow_list += f'[{follow}](https://twitter.com/{follow}) '
+        embed.add_embed_field(
+            name='Twitter', value=follow_list, inline=False)
+    except KeyError:
+        pass
+    try:
+        if data['twitter']['retweet'] or data['twitter']['like']:
+            description = '['
+            if data['twitter']['retweet']:
+                description += 'Retweet,'
+            if data['twitter']['like']:
+                description += 'Like'
+            description += ']('
+            if data['twitter']['tweet']:
+                description += data['twitter']['tweet'].strip()
+                description += ')'
+            embed.add_embed_field(name='Tweet', value=description)
+
+        if data['discord']['join']:
+            embed.add_embed_field(name='Discord', value='[Join Here]({})'.format(
+                data['discord']['join'], data['discord']['join']))
+        if data['discord']['role']:
             embed.add_embed_field(
-                name='Twitter', value=follow_list, inline=False)
-        except KeyError:
-            pass
-        try:
-            if data['twitter']['retweet'] or data['twitter']['like']:
-                description = '['
-                if data['twitter']['retweet']:
-                    description += 'Retweet,'
-                if data['twitter']['like']:
-                    description += 'Like'
-                description += ']('
-                if data['twitter']['tweet']:
-                    description += data['twitter']['tweet'].strip()
-                    description += ')'
-                embed.add_embed_field(name='Tweet', value=description)
+                name='Discord Role', value='Get {} Role'.format(data['discord']['role']))
+    except KeyError:
+        pass
 
-            if data['discord']['join']:
-                embed.add_embed_field(name='Discord', value='[Join Here]({})'.format(
-                    data['discord']['join'], data['discord']['join']))
-            if data['discord']['role']:
-                embed.add_embed_field(
-                    name='Discord Role', value='Get {} Role'.format(data['discord']['role']))
-        except KeyError:
-            pass
-
-        webhook.add_embed(embed)
-        webhook.execute()
+    webhook.add_embed(embed)
+    webhook.execute()
 
 
 def injection(session, response):
@@ -229,7 +232,12 @@ def requestPage(session, csrf, sessionId):
         "Referrer-Policy": "same-origin",
         "Cookie": f'csrftoken=${csrf}; session_id={sessionId};',
     })
+    if 'Connect Wallet' in response.text:
+        print("Cookies Expired")
+        return 'EXPIRED'
+
     parsed_html = BeautifulSoup(response.text, "html.parser")
+
     all_ = parsed_html.find_all('div', {"class": "row text-lg-right strong"})
 
     all_raffles = []
@@ -275,17 +283,23 @@ def requestPage(session, csrf, sessionId):
 
     # addToDB(session, all_raffles)
     # print(all_raffles)
+    return 'Done'
 
 
 def monitor():
     session = createSession()
     run = True
-    csrf = 'pYhhPIPm4beqe5xt9K4WYbA6uqE8UEjZwUum3C7xFE73YgJm4pPBWkmDD1oUbYvJ'
-    sessionId = 'f3zv7qat5aoya7b0f3mwq1a6vqzwl2dk'
+    csrf = 'oLaeU51Ry1MORbYu5cwEgRUJmvOarhv0jOWtOM2yPbGxaM4T7vzyvSGHcskyK03k'
+    sessionId = 'nztsv8fplpw8cja6anjzge6801egnh9m'
 
     while(run):
-        print(str(time.time()) + " |GETTING RAFFLES...")
-        requestPage(session, csrf, sessionId)
+        print(str(time.time()) + " | GETTING RAFFLES...")
+        res = requestPage(session, csrf, sessionId)
+        if res == 'EXPIRED':
+            webhook = DiscordWebhook(
+                url=PRIVATE_WEBHOOKS, content='Cookies Have Expired')
+            webhook.execute()
+            run = False
         time.sleep(60 * 30)
 
 
