@@ -4,6 +4,17 @@ const { uuid } = require('uuidv4');
 
 const router = Router();
 
+router.get('/raffles/reversed', async (req, res) => {
+    let results;
+    try {
+        results = await pool.query(`SELECT * FROM raffles`)
+        results = results.rows;
+    } catch { results = [] }
+
+    return res.status(200).json(results.reverse())
+})
+
+
 router.get('/raffles', async (req, res) => {
     let results;
     try {
